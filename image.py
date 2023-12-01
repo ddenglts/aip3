@@ -1,7 +1,14 @@
 import numpy as np
 import random
 from colorama import init, Fore, Style
-
+'''
+returns a 20x20 array of integers representing the colors of the pixels
+0 = white
+1 = red
+2 = green
+3 = blue
+4 = yellow
+'''
 def generate_diagram():
     # Initialize a 20x20 array (0 represents white color)
     image = np.zeros((20, 20), dtype=int)
