@@ -11,14 +11,14 @@ returns a 20x20 array of integers representing the colors of the pixels
 '''
 
 
-def generate_diagram(count = 1) -> tuple[np.ndarray, bool]:
+def generate_diagram(count = 1) -> tuple[np.ndarray, np.ndarray[bool]]:
     images = []
     dangerous = []
     for _ in range(count):
         image, danger = _generate_diagram()
         images.append(image)
         dangerous.append(danger)
-    return images, dangerous
+    return np.array(images), np.array(dangerous)
 
 def _generate_diagram():
     # Initialize a 20x20 array (0 represents white color)
