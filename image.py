@@ -16,8 +16,10 @@ def generate_diagram(count = 1) -> tuple[np.ndarray, np.ndarray[bool]]:
     dangerous = []
     for _ in range(count):
         image, danger = _generate_diagram()
-        images.append(image)
+        images.append(image.flatten())
         dangerous.append(danger)
+
+    # returns tuple(array of images, array of booleans)
     return np.array(images), np.array(dangerous)
 
 def _generate_diagram():
