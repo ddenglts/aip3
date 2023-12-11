@@ -1,4 +1,4 @@
-from image import generate_diagram
+from image import generate_diagram, generate_diagram_hot
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -8,7 +8,6 @@ class LogRegModel:
     def __init__(self, n):
         # Initialize the weights, including the bias as the first weight w_0
         self.weights = np.random.randn(n + 1)
-        print("init self.weights:", self.weights[:10])
         self.losses: list[float] = []
     
     def predict(self, x):
@@ -39,19 +38,19 @@ class LogRegModel:
 
 if __name__ == '__main__':
 
-    NUM_EPOCHS = 1000
+    NUM_EPOCHS = 10
     LEARNING_RATE = 0.01
-    NUM_TRAINING_IMAGES = 1000
-    NUM_TEST_IMAGES = 100
+    NUM_TRAINING_IMAGES = 1600
+    NUM_TEST_IMAGES = 200
 
-    images_training_data = generate_diagram(NUM_TRAINING_IMAGES)
+    images_training_data = generate_diagram_hot(NUM_TRAINING_IMAGES)
     training_images = images_training_data[0]
     training_labels = images_training_data[1]
 
     model = LogRegModel(training_images.shape[1])
     model.train(training_images, training_labels, epochs=NUM_EPOCHS, learning_rate=LEARNING_RATE)
 
-    images_test_data = generate_diagram(NUM_TEST_IMAGES)
+    images_test_data = generate_diagram_hot(NUM_TEST_IMAGES)
     test_images = images_test_data[0]
     test_images = np.insert(test_images, 0, 1, axis=1)
     test_labels = images_test_data[1]
