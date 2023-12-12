@@ -19,17 +19,19 @@ def generate_diagram_hot(count = 1) -> tuple[np.ndarray, np.ndarray]:
         new_image = []
         for v in image:
             if v == 1:
-                new_image.append([1/1600,0,0,0])
+                new_image.append([1/400,0,0,0])
             elif v == 2:
-                new_image.append([0,1/1600,0,0])
+                new_image.append([0,1/400,0,0])
             elif v == 3:
-                new_image.append([0,0,1/1600,0])
+                new_image.append([0,0,1/400,0])
             elif v == 4:
-                new_image.append([0,0,0,1/1600])
+                new_image.append([0,0,0,1/400])
             else:
                 new_image.append([0,0,0,0])
 
         images.append(np.array(new_image).flatten())
+        print(np.array(new_image).flatten()[:10])
+        print(image)
         dangerous.append(danger)
 
     # returns tuple(array of images, array of booleans)
@@ -145,3 +147,5 @@ def print_diagram(image):
 if __name__ == "__main__":
     diagram = _generate_diagram()
     print_diagram(diagram)
+
+    generate_diagram_hot(1)

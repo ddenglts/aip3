@@ -2,78 +2,84 @@ from image import generate_diagram, generate_diagram_hot
 import numpy as np
 import matplotlib.pyplot as plt
 
-#USING SGD:
 
 class LogRegModel:
-    def __init__(self, n):
-        # Initialize the weights, including the bias as the first weight w_0
-        self.weights = np.random.randn(n + 1)
-        self.losses: list[float] = []
-    
-    def predict(self, x):
-        '''
-        x is a vector of input values, including the bias x_0
-        '''
-        return 1 if self.sigmoid(self.weights, x) >= 0.5 else 0
-    
-    def train(self, X, y, epochs=1, learning_rate=1.0):
-        '''
-        X is a matrix of input vectors, including the bias x_0
-        y is a vector of labels
-        '''
-        # Add a column of ones to X to account for the bias weight w_0
+    def __init__(self):
+        self.w = None
+        self.losses = None
+
+    def train(self, X, y, epochs=100, lr = 0.01):
+        # X is a 2d numpy array of shape (n, 1600)
+        # y is a 1d numpy array of shape (n,)
+        # epochs is an integer
+        # lr is a float
+        # batch_size is an integer
+
+        # Initialize weights, w_0 = bias
+        self.w = np.random.randn(X.shape[1] + 1)
+
+        # Initialize loss array
+        self.losses = []
+
         X = np.insert(X, 0, 1, axis=1)
-        # X is now a matrix of input vectors with a leading 1 for the bias, y is a vector of true labels
+        
         for _ in range(epochs):
-            epoch_loss = 0
-            for j, _ in enumerate(X):
-                loss = self.sigmoid(self.weights, X[j]) - y[j]
-                self.weights -= learning_rate * X[j] * loss
-                epoch_loss += loss
-            self.losses.append(epoch_loss/len(X))
+            # Shuffle the data
+            indices = np.arange(X.shape[0])
+            np.random.shuffle(indices)
+            X = X[indices]
+            y = y[indices]
 
-    def sigmoid(self, w, x):
-        return 1 / (1 + np.exp(-np.dot(w, x)))
+            # Iterate through each image
+            for i in range(X.shape[0]):
+                # Get the image and label
+                x = X[i]
+                label = y[i]
 
+                # Compute the gradient
+                grad = self._gradient(x, label)
 
-if __name__ == '__main__':
-
-    NUM_EPOCHS = 10
-    LEARNING_RATE = 0.01
-    NUM_TRAINING_IMAGES = 1600
-    NUM_TEST_IMAGES = 200
-
-    images_training_data = generate_diagram_hot(NUM_TRAINING_IMAGES)
-    training_images = images_training_data[0]
-    training_labels = images_training_data[1]
-
-    model = LogRegModel(training_images.shape[1])
-    model.train(training_images, training_labels, epochs=NUM_EPOCHS, learning_rate=LEARNING_RATE)
-
-    images_test_data = generate_diagram_hot(NUM_TEST_IMAGES)
-    test_images = images_test_data[0]
-    test_images = np.insert(test_images, 0, 1, axis=1)
-    test_labels = images_test_data[1]
-
-    num_correct = 0
-    for i, _ in enumerate(test_images):
-        prediction = model.predict(test_images[i])
-        if prediction == test_labels[i]:
-            num_correct += 1
-
-    print("weights after training: ", model.weights[:10])
-    print("Accuracy on test data:", num_correct / len(test_images))
-
-
-    training_images = np.insert(training_images, 0, 1, axis=1)
-    # overfitting? testing with trained data
-    num_correct = 0
-    for i, _ in enumerate(training_images):
-        prediction = model.predict(training_images[i])
-        if prediction == training_labels[i]:
-            num_correct += 1
+                # Update the weights
+                self.w -= lr * grad
     
-    print("Accuracy on training data:", num_correct / len(training_images))
+    def _gradient(self, x, label):
+        return (self._sigmoid(self.w @ x) - label) * x
+    
+    def _sigmoid(self, z):
+        return 1 / (1 + np.exp(-z))
+    
+    def predict(self, X, cutoff = 0.5):
+        # X is a 2d numpy array of shape (n, 1600)
+        X = np.insert(X, 0, 1, axis=1)
+        return self._sigmoid(X @ self.w) > cutoff
 
-    plt.plot(model.losses)
-    plt.show()
+    def evaluate(self, X, y, cutoff = 0.5):
+        # X is a 2d numpy array of shape (n, 1600)
+        # y is a 1d numpy array of shape (n,)
+        return np.mean(self.predict(X, cutoff=cutoff) == y)
+    
+    def plot_weights(self):
+        # Plot the weights as a 20x20 image
+        vals = []
+        w = self.w.flatten()
+        w = w[1:]
+        w = w.reshape(20, 20, 4)
+        for v in w:
+            for v2 in v:
+                vals.append(np.average(v2))
+
+        vals = np.array(vals)
+        vals = vals.reshape(20, 20)
+        print(vals)
+        plt.imshow(vals)
+        plt.show()
+
+
+model = LogRegModel()
+X, y = generate_diagram_hot(5000)
+model.train(X, y, epochs=100, lr=0.01)
+print(model.evaluate(X, y))
+
+# accuracy vs lr
+
+data_point
