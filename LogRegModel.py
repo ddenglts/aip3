@@ -8,12 +8,12 @@ class LogRegModel:
         self.w = None
         self.losses = None
 
-    def train(self, X, y, epochs=100, lr = 0.01):
+    def train(self, X, y, epochs, lr, lambda_reg):
         # X is a 2d numpy array of shape (n, 1600)
         # y is a 1d numpy array of shape (n,)
         # epochs is an integer
         # lr is a float
-        # batch_size is an integer
+        # lambda_reg is the regularization parameter
 
         # Initialize weights, w_0 = bias
         self.w = np.random.randn(X.shape[1] + 1)
@@ -25,10 +25,10 @@ class LogRegModel:
         
         for _ in range(epochs):
             # Shuffle the data
-            indices = np.arange(X.shape[0])
-            np.random.shuffle(indices)
-            X = X[indices]
-            y = y[indices]
+            # indices = np.arange(X.shape[0])
+            # np.random.shuffle(indices)
+            # X = X[indices]
+            # y = y[indices]
 
             # Iterate through each image
             for i in range(X.shape[0]):
@@ -39,14 +39,17 @@ class LogRegModel:
                 # Compute the gradient
                 grad = self._gradient(x, label)
 
-                # Update the weights
-                self.w -= lr * grad
-    
+                # Update the weights with L2 regularization
+                self.w -= lr * (grad + lambda_reg * self.w)
+
     def _gradient(self, x, label):
         return (self._sigmoid(self.w @ x) - label) * x
     
     def _sigmoid(self, z):
         return 1 / (1 + np.exp(-z))
+    
+
+
     
     def predict(self, X, cutoff = 0.5):
         # X is a 2d numpy array of shape (n, 1600)
@@ -77,9 +80,11 @@ class LogRegModel:
 
 model = LogRegModel()
 X, y = generate_diagram_hot(5000)
-model.train(X, y, epochs=100, lr=0.01)
+model.train(X, y, epochs=1000, lr=0.1, lambda_reg=0)
 print(model.evaluate(X, y))
 
+X_test, y_test = generate_diagram_hot(5000)
+print(model.evaluate(X_test, y_test))
 # accuracy vs lr
 
-data_point
+# data_point

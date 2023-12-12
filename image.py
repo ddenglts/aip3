@@ -10,6 +10,15 @@ returns a 20x20 array of integers representing the colors of the pixels
 4 = yellow
 '''
 
+# def generate_diagram_nonlinear(count = 1) -> tuple[np.ndarray, np.ndarray]:
+#     images = []
+#     dangerous = []
+#     for _ in range(count):
+#         image, danger = _generate_diagram()
+#         for i,v in enumerate(image):
+
+
+
 def generate_diagram_hot(count = 1) -> tuple[np.ndarray, np.ndarray]:
     images = []
     dangerous = []
@@ -19,19 +28,19 @@ def generate_diagram_hot(count = 1) -> tuple[np.ndarray, np.ndarray]:
         new_image = []
         for v in image:
             if v == 1:
-                new_image.append([1/400,0,0,0])
+                new_image.append([1,0,0,0])
             elif v == 2:
-                new_image.append([0,1/400,0,0])
+                new_image.append([0,1,0,0])
             elif v == 3:
-                new_image.append([0,0,1/400,0])
+                new_image.append([0,0,1,0])
             elif v == 4:
-                new_image.append([0,0,0,1/400])
+                new_image.append([0,0,0,1])
             else:
                 new_image.append([0,0,0,0])
 
         images.append(np.array(new_image).flatten())
-        print(np.array(new_image).flatten()[:10])
-        print(image)
+        # print(np.array(new_image).flatten()[:10])
+        # print(image)
         dangerous.append(danger)
 
     # returns tuple(array of images, array of booleans)
