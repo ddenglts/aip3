@@ -1,4 +1,4 @@
-from image import generate_diagram, generate_diagram_hot
+from image import *
 import numpy as np
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
@@ -78,37 +78,61 @@ class LogRegModel:
         plt.show()
 
 
-X, y = generate_diagram_hot(5000)
+X, y = generate_diagram_nonlinear1(5000)
 
-X_test, y_test = generate_diagram_hot(5000)
+X_test, y_test = generate_diagram_nonlinear1(1000)
 
 
-def train_and_evaluate(l):
-    avg = 0
-    for _ in range(10):
-        model = LogRegModel()
-        model.train(X, y, epochs=100, lr=l, lambda_reg=0)
-        avg += model.evaluate(X_test, y_test)
-    print("Progress:", l)
-    return avg / 10
+# # -----------------------------------------------------
+# # accuracy vs regularization parameter
+# def train_and_evaluate(l):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
+#     print("Progress:", l)
+#     return model.evaluate(X_test, y_test)
 
-if __name__ == '__main__':
-    lr = np.linspace(0.001, 0.1, 101)
-    acc = []
+# if __name__ == '__main__':
+#     lambda_reg = np.logspace(0, 1, base=10, num=100)
+#     acc = []
 
-    with Pool() as p:
-        acc = p.map(train_and_evaluate, lr)
+#     with Pool() as p:
+#         acc = p.map(train_and_evaluate, lambda_reg)
 
-    plt.plot(lr, acc)
-    plt.xlabel("Learning Rate")
-    plt.ylabel("Accuracy")
-    plt.title("Learning Rate vs Accuracy")
-    plt.savefig("images/lr.png")
+#     plt.plot(lambda_reg, acc)
+#     plt.xlabel("Regularization Parameter")
+#     plt.ylabel("Accuracy")
+#     plt.title("Regularization Parameter vs Accuracy")
+#     plt.savefig("images/lambda.png")
+
+
+
+# ----------------------------------
+# def train_and_evaluate(l):
+#     avg = 0
+#     for _ in range(10):
+#         model = LogRegModel()
+#         model.train(X, y, epochs=100, lr=l, lambda_reg=0)
+#         avg += model.evaluate(X_test, y_test)
+#     print("Progress:", l)
+#     return avg / 10
+
+# if __name__ == '__main__':
+#     lr = np.linspace(0.001, 0.1, 101)
+#     acc = []
+
+#     with Pool() as p:
+#         acc = p.map(train_and_evaluate, lr)
+
+#     plt.plot(lr, acc)
+#     plt.xlabel("Learning Rate")
+#     plt.ylabel("Accuracy")
+#     plt.title("Learning Rate vs Accuracy")
+#     plt.savefig("images/lr.png")
 
 
 
 # -----------------------------------------------------
-# # accuracy vs number of training examples
+# accuracy vs number of training examples
 
 # def train_and_evaluate(n):
 #     model = LogRegModel()
@@ -117,7 +141,7 @@ if __name__ == '__main__':
 #     return model.evaluate(X_test, y_test)
 
 # if __name__ == '__main__':
-#     num_examples = np.linspace(1, 5000, 100)
+#     num_examples = np.linspace(1, X.shape[0], 100)
 #     acc = []
 
 #     with Pool() as p:
@@ -129,3 +153,24 @@ if __name__ == '__main__':
 #     plt.title("Number of Training Examples vs Accuracy")
 #     plt.savefig("images/num_examples.png")
 
+# -----------------------------------------------------
+# accuracy vs number of epochs
+
+# def train_and_evaluate(n):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=int(n), lr=0.05, lambda_reg=0)
+#     print("Progress:", n)
+#     return model.evaluate(X_test, y_test)
+
+# if __name__ == '__main__':
+#     num_epochs = np.linspace(1, 1000, 100)
+#     acc = []
+
+#     with Pool() as p:
+#         acc = p.map(train_and_evaluate, num_epochs)
+
+#     plt.plot(num_epochs, acc)
+#     plt.xlabel("Number of Epochs")
+#     plt.ylabel("Accuracy")
+#     plt.title("Number of Epochs vs Accuracy")
+#     plt.savefig("images/num_epochs.png")
