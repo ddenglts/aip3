@@ -27,8 +27,7 @@ y_val = one_hot_encode(y_val_int, 4)
 # Model Training
 model = LogisticRegressionModel(1600, 4)
 loss_fn = CrossEntropyLoss()
-train(model, loss_fn, x_train, y_train, x_val, y_val, epochs=500, learning_rate=.91, reg_lambda=0)
-
+train_accuracies, val_accuracies = train(model, loss_fn, x_train, y_train, x_val, y_val, epochs=500, learning_rate=0.91, reg_lambda=0)
 y_train_pred = model.predict(x_train)
 train_accuracy = calculate_accuracy(y_train, y_train_pred)
 print(f'Training Accuracy: {train_accuracy:.2f}')
