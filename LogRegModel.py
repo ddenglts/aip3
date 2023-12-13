@@ -41,6 +41,7 @@ class LogRegModel:
 
                 # Update the weights with L2 regularization
                 self.w -= lr * (grad + lambda_reg * self.w)
+                
 
     def _gradient(self, x, label):
         return (self._sigmoid(self.w @ x) - label) * x
@@ -69,7 +70,7 @@ class LogRegModel:
         w = w.reshape(20, 20, 4)
         for v in w:
             for v2 in v:
-                vals.append(np.average(v2))
+                vals.append(np.max(v2))
 
         vals = np.array(vals)
         vals = vals.reshape(20, 20)
@@ -77,32 +78,56 @@ class LogRegModel:
         plt.imshow(vals)
         plt.show()
 
+'''
+Optimal parameters:
+Learning rate: 0.05
+Regularization parameter: 0
+Number of epochs: 100
+
+'''
+
+
+
+
+
 
 X, y = generate_diagram_nonlinear1(5000)
 
 X_test, y_test = generate_diagram_nonlinear1(1000)
 
+# model = LogRegModel()
+# model.train(X, y, epochs=1000, lr=0.05, lambda_reg=0)
+# print(model.evaluate(X, y))
+# print(model.evaluate(X_test, y_test))
+
+
 
 # # -----------------------------------------------------
-# # accuracy vs regularization parameter
-# def train_and_evaluate(l):
-#     model = LogRegModel()
-#     model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
-#     print("Progress:", l)
-#     return model.evaluate(X_test, y_test)
+# accuracy vs regularization parameter
+def train_and_evaluate(l):
+    model = LogRegModel()
+    model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
+    print("Progress:", l)
+    train_acc = model.evaluate(X, y)
+    test_acc = model.evaluate(X_test, y_test)
+    return train_acc, test_acc
 
-# if __name__ == '__main__':
-#     lambda_reg = np.logspace(0, 1, base=10, num=100)
-#     acc = []
+if __name__ == '__main__':
+    lambda_reg = np.logspace(np.log10(0.00000000001), np.log10(0.0001), num=100)
+    train_acc = []
+    test_acc = []
 
-#     with Pool() as p:
-#         acc = p.map(train_and_evaluate, lambda_reg)
+    with Pool() as p:
+        results = p.map(train_and_evaluate, lambda_reg)
+        train_acc, test_acc = zip(*results)
 
-#     plt.plot(lambda_reg, acc)
-#     plt.xlabel("Regularization Parameter")
-#     plt.ylabel("Accuracy")
-#     plt.title("Regularization Parameter vs Accuracy")
-#     plt.savefig("images/lambda.png")
+    plt.plot(lambda_reg, train_acc, label='Training Accuracy')
+    plt.plot(lambda_reg, test_acc, label='Test Accuracy')
+    plt.xlabel("Regularization Parameter")
+    plt.ylabel("Accuracy")
+    plt.title("Regularization Parameter vs Accuracy")
+    plt.legend()
+    plt.savefig("images/lambda.png")
 
 
 
@@ -156,21 +181,27 @@ X_test, y_test = generate_diagram_nonlinear1(1000)
 # -----------------------------------------------------
 # accuracy vs number of epochs
 
-# def train_and_evaluate(n):
-#     model = LogRegModel()
-#     model.train(X, y, epochs=int(n), lr=0.05, lambda_reg=0)
-#     print("Progress:", n)
-#     return model.evaluate(X_test, y_test)
+def train_and_evaluate(n):
+    model = LogRegModel()
+    model.train(X, y, epochs=int(n), lr=0.05, lambda_reg=0)
+    print("Progress:", n)
+    train_acc = model.evaluate(X, y)
+    test_acc = model.evaluate(X_test, y_test)
+    return train_acc, test_acc
 
-# if __name__ == '__main__':
-#     num_epochs = np.linspace(1, 1000, 100)
-#     acc = []
+if __name__ == '__main__':
+    num_epochs = np.linspace(1, 1000, 100)
+    train_acc = []
+    test_acc = []
 
-#     with Pool() as p:
-#         acc = p.map(train_and_evaluate, num_epochs)
+    with Pool() as p:
+        results = p.map(train_and_evaluate, num_epochs)
+        train_acc, test_acc = zip(*results)
 
-#     plt.plot(num_epochs, acc)
-#     plt.xlabel("Number of Epochs")
-#     plt.ylabel("Accuracy")
-#     plt.title("Number of Epochs vs Accuracy")
-#     plt.savefig("images/num_epochs.png")
+    plt.plot(num_epochs, train_acc, label='Training Accuracy')
+    plt.plot(num_epochs, test_acc, label='Test Accuracy')
+    plt.xlabel("Number of Epochs")
+    plt.ylabel("Accuracy")
+    plt.title("Number of Epochs vs Accuracy")
+    plt.legend()
+    plt.savefig("images/num_epochs.png")

@@ -10,12 +10,6 @@ returns a 20x20 array of integers representing the colors of the pixels
 4 = yellow
 '''
 
-# def generate_diagram_nonlinear(count = 1) -> tuple[np.ndarray, np.ndarray]:
-#     images = []
-#     dangerous = []
-#     for _ in range(count):
-#         image, danger = _generate_diagram()
-#         for i,v in enumerate(image):
 
 def generate_diagram_nonlinear1(count = 1) -> tuple[np.ndarray, np.ndarray]:
     images = []
@@ -88,7 +82,7 @@ def _generate_diagram():
     colors = {
         "Red": 1,
         "Green": 2,
-        "Blue": 3,
+        "Blue":3,
         "Yellow": 4
     }
 
@@ -173,10 +167,7 @@ def print_diagram(image):
     
     print(image[1])
 
-# Generate and print the diagram
 
 if __name__ == "__main__":
     diagram = _generate_diagram()
     print_diagram(diagram)
-
-    generate_diagram_hot(1)
