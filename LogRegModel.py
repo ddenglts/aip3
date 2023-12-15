@@ -92,7 +92,6 @@ nl2: 2500 examples training
 
 
 
-
 X, y = generate_diagram_nonlinear3(5000)
 
 X_test, y_test = generate_diagram_nonlinear3(5000)
@@ -241,3 +240,30 @@ if __name__ == '__main__':
 #     plt.title("Number of Epochs vs Accuracy")
 #     plt.legend()
 #     plt.savefig("images/num_epochs.png")
+
+#---------------------------------
+# accuracy vs cutoff
+# def train_and_evaluate(n):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=150, lr=0.05, lambda_reg=0)
+#     print("Progress:", n)
+#     train_acc = model.evaluate(X, y, cutoff=n)
+#     test_acc = model.evaluate(X_test, y_test, cutoff=n)
+#     return train_acc, test_acc
+
+# if __name__ == '__main__':
+#     num_epochs = np.linspace(0, 1, 100)
+#     train_acc = []
+#     test_acc = []
+
+#     with Pool() as p:
+#         results = p.map(train_and_evaluate, num_epochs)
+#         train_acc, test_acc = zip(*results)
+
+#     plt.plot(num_epochs, train_acc, label='Training Accuracy')
+#     plt.plot(num_epochs, test_acc, label='Test Accuracy')
+#     plt.xlabel("Cutoff")
+#     plt.ylabel("Accuracy")
+#     plt.title("Cutoff vs Accuracy")
+#     plt.legend()
+#     plt.savefig("images/cutoff.png")

@@ -55,9 +55,7 @@ def generate_diagram_nonlinear3(count = 1) -> tuple[np.ndarray, np.ndarray]:
         merged.extend(v)
         merged.extend(conved_images[i])
         mergeds[0].append(merged)
-    print(one_hot_diagrams[1])
     mergeds[1].extend(one_hot_diagrams[1].flatten())
-
     return np.array(mergeds[0]), np.array(mergeds[1])
 
 
