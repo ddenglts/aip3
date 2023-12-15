@@ -104,30 +104,30 @@ X_test, y_test = generate_diagram_nonlinear1(1000)
 
 # # -----------------------------------------------------
 # accuracy vs regularization parameter
-def train_and_evaluate(l):
-    model = LogRegModel()
-    model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
-    print("Progress:", l)
-    train_acc = model.evaluate(X, y)
-    test_acc = model.evaluate(X_test, y_test)
-    return train_acc, test_acc
+# def train_and_evaluate(l):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
+#     print("Progress:", l)
+#     train_acc = model.evaluate(X, y)
+#     test_acc = model.evaluate(X_test, y_test)
+#     return train_acc, test_acc
 
-if __name__ == '__main__':
-    lambda_reg = np.logspace(np.log10(0.00000000001), np.log10(0.0001), num=100)
-    train_acc = []
-    test_acc = []
+# if __name__ == '__main__':
+#     lambda_reg = np.logspace(np.log10(0.00000000001), np.log10(0.0001), num=100)
+#     train_acc = []
+#     test_acc = []
 
-    with Pool() as p:
-        results = p.map(train_and_evaluate, lambda_reg)
-        train_acc, test_acc = zip(*results)
+#     with Pool() as p:
+#         results = p.map(train_and_evaluate, lambda_reg)
+#         train_acc, test_acc = zip(*results)
 
-    plt.plot(lambda_reg, train_acc, label='Training Accuracy')
-    plt.plot(lambda_reg, test_acc, label='Test Accuracy')
-    plt.xlabel("Regularization Parameter")
-    plt.ylabel("Accuracy")
-    plt.title("Regularization Parameter vs Accuracy")
-    plt.legend()
-    plt.savefig("images/lambda.png")
+#     plt.plot(lambda_reg, train_acc, label='Training Accuracy')
+#     plt.plot(lambda_reg, test_acc, label='Test Accuracy')
+#     plt.xlabel("Regularization Parameter")
+#     plt.ylabel("Accuracy")
+#     plt.title("Regularization Parameter vs Accuracy")
+#     plt.legend()
+#     plt.savefig("images/lambda.png")
 
 
 
