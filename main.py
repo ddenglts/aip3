@@ -1,4 +1,4 @@
-from image import generate_diagram, generate_diagram_hot
+from image import generate_diagram_hot
 from LogisticRegressionModel import *
 from CrossEntropyLoss import *
 from train import *
