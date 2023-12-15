@@ -82,7 +82,9 @@ class LogRegModel:
 Optimal parameters:
 Learning rate: 0.05
 Regularization parameter: 0
-Number of epochs: 100
+Number of epochs: 150
+
+nl2: 2500 examples training
 
 '''
 
@@ -91,12 +93,12 @@ Number of epochs: 100
 
 
 
-X, y = generate_diagram_nonlinear1(5000)
+X, y = generate_diagram_nonlinear3(5000)
 
-X_test, y_test = generate_diagram_nonlinear1(1000)
+X_test, y_test = generate_diagram_nonlinear3(5000)
 
 # model = LogRegModel()
-# model.train(X, y, epochs=1000, lr=0.05, lambda_reg=0)
+# model.train(X, y, epochs=150, lr=0.05, lambda_reg=0)
 # print(model.evaluate(X, y))
 # print(model.evaluate(X_test, y_test))
 
@@ -104,30 +106,30 @@ X_test, y_test = generate_diagram_nonlinear1(1000)
 
 # # -----------------------------------------------------
 # accuracy vs regularization parameter
-# def train_and_evaluate(l):
-#     model = LogRegModel()
-#     model.train(X, y, epochs=100, lr=0.05, lambda_reg=l)
-#     print("Progress:", l)
-#     train_acc = model.evaluate(X, y)
-#     test_acc = model.evaluate(X_test, y_test)
-#     return train_acc, test_acc
+def train_and_evaluate(l):
+    model = LogRegModel()
+    model.train(X, y, epochs=150, lr=0.05, lambda_reg=l)
+    print("Progress:", l)
+    train_acc = model.evaluate(X, y)
+    test_acc = model.evaluate(X_test, y_test)
+    return train_acc, test_acc
 
-# if __name__ == '__main__':
-#     lambda_reg = np.logspace(np.log10(0.00000000001), np.log10(0.0001), num=100)
-#     train_acc = []
-#     test_acc = []
+if __name__ == '__main__':
+    lambda_reg = np.linspace(0, 0.1, num=100)
+    train_acc = []
+    test_acc = []
 
-#     with Pool() as p:
-#         results = p.map(train_and_evaluate, lambda_reg)
-#         train_acc, test_acc = zip(*results)
+    with Pool() as p:
+        results = p.map(train_and_evaluate, lambda_reg)
+        train_acc, test_acc = zip(*results)
 
-#     plt.plot(lambda_reg, train_acc, label='Training Accuracy')
-#     plt.plot(lambda_reg, test_acc, label='Test Accuracy')
-#     plt.xlabel("Regularization Parameter")
-#     plt.ylabel("Accuracy")
-#     plt.title("Regularization Parameter vs Accuracy")
-#     plt.legend()
-#     plt.savefig("images/lambda.png")
+    plt.plot(lambda_reg, train_acc, label='Training Accuracy')
+    plt.plot(lambda_reg, test_acc, label='Test Accuracy')
+    plt.xlabel("Regularization Parameter")
+    plt.ylabel("Accuracy")
+    plt.title("Regularization Parameter vs Accuracy")
+    plt.legend()
+    plt.savefig("images/lambda.png")
 
 
 
@@ -161,47 +163,81 @@ X_test, y_test = generate_diagram_nonlinear1(1000)
 
 # def train_and_evaluate(n):
 #     model = LogRegModel()
-#     model.train(X[:int(n)], y[:int(n)], epochs=100, lr=0.05, lambda_reg=0)
+#     model.train(X[:int(n)], y[:int(n)], epochs=150, lr=0.02, lambda_reg=0)
 #     print("Progress:", n)
-#     return model.evaluate(X_test, y_test)
+#     train_acc = model.evaluate(X[:int(n)], y[:int(n)])
+#     test_acc = model.evaluate(X_test, y_test)
+#     return train_acc, test_acc
 
 # if __name__ == '__main__':
 #     num_examples = np.linspace(1, X.shape[0], 100)
-#     acc = []
+#     train_acc = []
+#     test_acc = []
 
 #     with Pool() as p:
-#         acc = p.map(train_and_evaluate, num_examples)
+#         results = p.map(train_and_evaluate, num_examples)
+#         train_acc, test_acc = zip(*results)
 
-#     plt.plot(num_examples, acc)
+#     plt.plot(num_examples, train_acc, label='Training Accuracy')
+#     plt.plot(num_examples, test_acc, label='Test Accuracy')
 #     plt.xlabel("Number of Training Examples")
 #     plt.ylabel("Accuracy")
 #     plt.title("Number of Training Examples vs Accuracy")
+#     plt.legend()
+#     plt.savefig("images/num_examples.png")
+
+# -----------------------------------------------------
+# accuracy vs number of TESTING examples
+
+# def train_and_evaluate(n):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=150, lr=0.02, lambda_reg=0)
+#     print("Progress:", n)
+#     train_acc = model.evaluate(X, y)
+#     test_acc = model.evaluate(X_test[:int(n)], y_test[:int(n)])
+#     return train_acc, test_acc
+
+# if __name__ == '__main__':
+#     num_examples = np.linspace(1, X_test.shape[0], 100)
+#     train_acc = []
+#     test_acc = []
+
+#     with Pool() as p:
+#         results = p.map(train_and_evaluate, num_examples)
+#         train_acc, test_acc = zip(*results)
+
+#     plt.plot(num_examples, train_acc, label='Training Accuracy')
+#     plt.plot(num_examples, test_acc, label='Test Accuracy')
+#     plt.xlabel("Number of Testing Examples")
+#     plt.ylabel("Accuracy")
+#     plt.title("Number of Testing Examples vs Accuracy")
+#     plt.legend()
 #     plt.savefig("images/num_examples.png")
 
 # -----------------------------------------------------
 # accuracy vs number of epochs
 
-def train_and_evaluate(n):
-    model = LogRegModel()
-    model.train(X, y, epochs=int(n), lr=0.05, lambda_reg=0)
-    print("Progress:", n)
-    train_acc = model.evaluate(X, y)
-    test_acc = model.evaluate(X_test, y_test)
-    return train_acc, test_acc
+# def train_and_evaluate(n):
+#     model = LogRegModel()
+#     model.train(X, y, epochs=int(n), lr=0.05, lambda_reg=0)
+#     print("Progress:", n)
+#     train_acc = model.evaluate(X, y)
+#     test_acc = model.evaluate(X_test, y_test)
+#     return train_acc, test_acc
 
-if __name__ == '__main__':
-    num_epochs = np.linspace(1, 1000, 100)
-    train_acc = []
-    test_acc = []
+# if __name__ == '__main__':
+#     num_epochs = np.linspace(1, 1000, 100)
+#     train_acc = []
+#     test_acc = []
 
-    with Pool() as p:
-        results = p.map(train_and_evaluate, num_epochs)
-        train_acc, test_acc = zip(*results)
+#     with Pool() as p:
+#         results = p.map(train_and_evaluate, num_epochs)
+#         train_acc, test_acc = zip(*results)
 
-    plt.plot(num_epochs, train_acc, label='Training Accuracy')
-    plt.plot(num_epochs, test_acc, label='Test Accuracy')
-    plt.xlabel("Number of Epochs")
-    plt.ylabel("Accuracy")
-    plt.title("Number of Epochs vs Accuracy")
-    plt.legend()
-    plt.savefig("images/num_epochs.png")
+#     plt.plot(num_epochs, train_acc, label='Training Accuracy')
+#     plt.plot(num_epochs, test_acc, label='Test Accuracy')
+#     plt.xlabel("Number of Epochs")
+#     plt.ylabel("Accuracy")
+#     plt.title("Number of Epochs vs Accuracy")
+#     plt.legend()
+#     plt.savefig("images/num_epochs.png")
