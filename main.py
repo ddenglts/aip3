@@ -4,44 +4,54 @@ from CrossEntropyLoss import CrossEntropyLoss
 from train import train, calculate_accuracy
 import numpy as np
 
-def one_hot_encode(y, num_classes):
-    one_hot = np.zeros((len(y), num_classes))
-    one_hot[np.arange(len(y)), y] = 1
-    return one_hot
+class TestModel:
+    def __init__(self, num_epochs=500):
+        # Model parameters
+        self.num_classes = 4  # Red, Green, Blue, Yellow
+        self.input_size = 20 * 20 * 4  # Size of the flattened one-hot encoded image
+        self.model = LogisticRegressionModel(self.input_size, self.num_classes)
+        self.num_epochs = num_epochs
 
-def prepare_data(samples, num_classes):
-    x_data, y_data = [], []
-    color_to_index = {'Red': 0, 'Green': 1, 'Blue': 2, 'Yellow': 3}  # Map color names to indices
+    def load_data(self, train_size=1000, test_size=200):
+        # Generating training data
+        x_train, y_train = generate_diagram_hot(train_size, task1_or_2=True)
+        
+        # Generating testing data
+        x_test, y_test = generate_diagram_hot(test_size, task1_or_2=True)
 
-    for _ in range(samples):
-        diagram, wire_to_cut_array = generate_diagram_hot(1, True)
-        x_data.append(diagram.flatten())  # Flatten the diagram
+        # One-hot encoding the labels for training
+        y_train_encoded = np.zeros((y_train.size, self.num_classes))
+        y_train_encoded[np.arange(y_train.size), y_train] = 1
 
-        if wire_to_cut_array.size == 1:
-            wire_to_cut_color = wire_to_cut_array.item()  # Convert array to string
-            wire_to_cut_index = color_to_index[wire_to_cut_color]  # Convert color name to index
-            y_data.append(wire_to_cut_index)
-        else:
-            # Handle unexpected format
-            raise ValueError("Unexpected format for wire color")
+        # One-hot encoding the labels for testing
+        y_test_encoded = np.zeros((y_test.size, self.num_classes))
+        y_test_encoded[np.arange(y_test.size), y_test] = 1
 
-    return np.array(x_data), one_hot_encode(np.array(y_data), num_classes)
+        return x_train, y_train_encoded, x_test, y_test_encoded
 
+    def run(self):
+        # Load data
+        x_train, y_train, x_test, y_test = self.load_data()
 
-# Data Preparation
-x_train, y_train = prepare_data(5000, 4)  # Generate training data
-x_val, y_val = prepare_data(5000, 4)      # Generate validation data
+        # Define loss function and other parameters
+        loss_fn = CrossEntropyLoss()  # Assuming you have this defined somewhere
+        learning_rate = 0.001
+        reg_lambda = 0.01  # Regularization parameter
 
-# Model Training
-model = LogisticRegressionModel(1600, 4)
-loss_fn = CrossEntropyLoss()
-train_accuracies, val_accuracies = train(model, loss_fn, x_train, y_train, x_val, y_val, epochs=500, learning_rate=0.05, reg_lambda=0)
+        # Train the model
+        train_accuracies, val_accuracies = train(
+            self.model, loss_fn, x_train, y_train, x_test, y_test,
+            self.num_epochs, learning_rate, reg_lambda
+        )
 
-# Calculate and Print Accuracies
-y_train_pred = model.predict(x_train)
-train_accuracy = calculate_accuracy(y_train, y_train_pred)
-print(f'Training Accuracy: {train_accuracy:.2f}')
+        # Test the model
+        y_test_pred = self.model.predict(x_test)
+        test_accuracy = calculate_accuracy(y_test, y_test_pred)
+        print(f"Test accuracy: {test_accuracy}")
 
-y_val_pred = model.predict(x_val)
-val_accuracy = calculate_accuracy(y_val, y_val_pred)
-print(f'Validation Accuracy: {val_accuracy:.2f}')
+        return train_accuracies, val_accuracies, test_accuracy
+
+# Running the test
+test_model = TestModel()
+train_accuracies, val_accuracies, test_accuracy = test_model.run()
+
