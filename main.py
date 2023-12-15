@@ -1,33 +1,43 @@
 from image import generate_diagram_hot
-from LogisticRegressionModel import *
-from CrossEntropyLoss import *
-from train import *
+from LogisticRegressionModel import LogisticRegressionModel
+from CrossEntropyLoss import CrossEntropyLoss
+from train import train, calculate_accuracy
 import numpy as np
-
-def convert_to_int_labels(y_bool):
-    return y_bool.astype(int)
 
 def one_hot_encode(y, num_classes):
     one_hot = np.zeros((len(y), num_classes))
     one_hot[np.arange(len(y)), y] = 1
     return one_hot
 
+def prepare_data(samples, num_classes):
+    x_data, y_data = [], []
+    color_to_index = {'Red': 0, 'Green': 1, 'Blue': 2, 'Yellow': 3}  # Map color names to indices
+
+    for _ in range(samples):
+        diagram, wire_to_cut_array = generate_diagram_hot(1, True)
+        x_data.append(diagram.flatten())  # Flatten the diagram
+
+        if wire_to_cut_array.size == 1:
+            wire_to_cut_color = wire_to_cut_array.item()  # Convert array to string
+            wire_to_cut_index = color_to_index[wire_to_cut_color]  # Convert color name to index
+            y_data.append(wire_to_cut_index)
+        else:
+            # Handle unexpected format
+            raise ValueError("Unexpected format for wire color")
+
+    return np.array(x_data), one_hot_encode(np.array(y_data), num_classes)
+
+
 # Data Preparation
-x_train, y_train_raw = generate_diagram_hot(5000)  # Generate training data
-x_val, y_val_raw = generate_diagram_hot(5000)      # Generate validation data
-
-# Convert boolean labels to integer labels
-y_train_int = convert_to_int_labels(y_train_raw)
-y_val_int = convert_to_int_labels(y_val_raw)
-
-# Convert the integer labels to one-hot encoded format
-y_train = one_hot_encode(y_train_int, 4)
-y_val = one_hot_encode(y_val_int, 4)
+x_train, y_train = prepare_data(5000, 4)  # Generate training data
+x_val, y_val = prepare_data(5000, 4)      # Generate validation data
 
 # Model Training
 model = LogisticRegressionModel(1600, 4)
 loss_fn = CrossEntropyLoss()
-train_accuracies, val_accuracies = train(model, loss_fn, x_train, y_train, x_val, y_val, epochs=500, learning_rate=0.91, reg_lambda=0)
+train_accuracies, val_accuracies = train(model, loss_fn, x_train, y_train, x_val, y_val, epochs=500, learning_rate=0.05, reg_lambda=0)
+
+# Calculate and Print Accuracies
 y_train_pred = model.predict(x_train)
 train_accuracy = calculate_accuracy(y_train, y_train_pred)
 print(f'Training Accuracy: {train_accuracy:.2f}')
