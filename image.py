@@ -313,51 +313,43 @@ def _generate_diagram():
 
 
 def _generate_dangerous_diagram_and_wire_to_cut():
+    # Initialize a 20x20 array (0 represents white color)
+    image = np.zeros((20, 20), dtype=int)
+
+    # Define colors mapping to integers
+    colors = {
+        "Red": 1,
+        "Green": 2,
+        "Blue": 3,
+        "Yellow": 4
+    }
+
+    # Randomly choose whether to start with rows or columns
+    start_with_row = random.choice([True, False])
+
+    # Generate a sequence of colors with Red before Yellow
     while True:
-        # Initialize a 20x20 array (0 represents white color)
-        image = np.zeros((20, 20), dtype=int)
-
-        # Define colors mapping to integers
-        colors = {
-            "Red": 1,
-            "Green": 2,
-            "Blue": 3,
-            "Yellow": 4
-        }
-
-        # Randomly choose whether to start with rows or columns
-        start_with_row = random.choice([True, False])
-
-        # Choose four different colors
         chosen_colors = random.sample(list(colors.keys()), 4)
+        if chosen_colors.index("Red") < chosen_colors.index("Yellow"):
+            break  # This sequence is dangerous
 
-        red_ind = -1
-        yellow_ind = -1
-        dangerous = False
-        for i, color in enumerate(chosen_colors):
-            if color == "Red":
-                red_ind = i
-            if color == "Yellow":
-                yellow_ind = i
-            if red_ind < yellow_ind:
-                dangerous = True
+    # The wire to cut is the third one laid down
+    wire_to_cut = colors[chosen_colors[2]]  # Get the third color
 
-        # Apply colors
-        for i, color_name in enumerate(chosen_colors):
-            color = colors[color_name]
-            if start_with_row:
-                row = random.randint(0, 19)
-                image[row, :] = color
-                start_with_row = False
-            else:
-                col = random.randint(0, 19)
-                image[:, col] = color
-                start_with_row = True
+    # Apply colors to the diagram
+    for i, color_name in enumerate(chosen_colors):
+        color = colors[color_name]
+        if start_with_row:
+            row = random.randint(0, 19)
+            image[row, :] = color
+            start_with_row = False
+        else:
+            col = random.randint(0, 19)
+            image[:, col] = color
+            start_with_row = True
 
-        if dangerous:
-            # The wire to cut is the third one in the chosen_colors list
-            wire_to_cut = chosen_colors[2]  # Get the third color
-            return image, wire_to_cut
+    return image, wire_to_cut
+
 
 
 
