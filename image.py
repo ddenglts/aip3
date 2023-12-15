@@ -35,11 +35,14 @@ def generate_diagram_nonlinear1(count = 1) -> tuple[np.ndarray, np.ndarray]:
     return np.array(images), np.array(dangerous)
 
 
-def generate_diagram_hot(count = 1) -> tuple[np.ndarray, np.ndarray]:
+def generate_diagram_hot(count = 1, task1_or_2 = False) -> tuple[np.ndarray, np.ndarray]:
     images = []
     dangerous = []
     for _ in range(count):
-        image, danger = _generate_diagram()
+        if task1_or_2 == False:
+            image, danger = _generate_diagram()
+        else:
+            image, danger = _generate_dangerous_diagram_and_wire_to_cut()
         image = image.flatten()
         new_image = []
         for v in image:
@@ -148,6 +151,57 @@ def _generate_diagram():
         image[new_row, :] = colors[chosen_colors[3]]
 
     return (image, dangerous)
+
+
+def _generate_dangerous_diagram_and_wire_to_cut():
+    while True:
+        # Initialize a 20x20 array (0 represents white color)
+        image = np.zeros((20, 20), dtype=int)
+
+        # Define colors mapping to integers
+        colors = {
+            "Red": 1,
+            "Green": 2,
+            "Blue": 3,
+            "Yellow": 4
+        }
+
+        # Randomly choose whether to start with rows or columns
+        start_with_row = random.choice([True, False])
+
+        # Choose four different colors
+        chosen_colors = random.sample(list(colors.keys()), 4)
+
+        red_ind = -1
+        yellow_ind = -1
+        dangerous = False
+        for i, color in enumerate(chosen_colors):
+            if color == "Red":
+                red_ind = i
+            if color == "Yellow":
+                yellow_ind = i
+            if red_ind < yellow_ind:
+                dangerous = True
+
+        # Apply colors
+        for i, color_name in enumerate(chosen_colors):
+            color = colors[color_name]
+            if start_with_row:
+                row = random.randint(0, 19)
+                image[row, :] = color
+                start_with_row = False
+            else:
+                col = random.randint(0, 19)
+                image[:, col] = color
+                start_with_row = True
+
+        if dangerous:
+            # The wire to cut is the third one in the chosen_colors list
+            wire_to_cut = chosen_colors[2]  # Get the third color
+            return image, wire_to_cut
+
+
+
 
 def print_diagram(image):
     init()  # Initialize Colorama
